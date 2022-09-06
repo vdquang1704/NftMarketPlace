@@ -9,13 +9,30 @@
 
 ```bash
 nom install -g truffle
-
 ```
 
 2. Install ganache-cli for local testing
 
 ```bash
 npm install -g ganache-cli
+```
+
+3. Install Openzeppelin
+
+```bash
+npm install @openzeppelin/contracts
+```
+
+4. Install hdwallet-provider
+
+```bash
+npm install @truffle/hdwallet-provider
+```
+
+5. Install dotenv
+
+```bash
+npm install dotenv
 ```
 
 # Deploying
