@@ -26,15 +26,30 @@ module.exports = {
       ),
       network_id: 42,
       skipDryRun: true //true if you don't want to test run the migration locally before the actual migration
-    }
+    },
    
-  },
+  
+
+    bscTestnet: {
+      provider: () => new HDWalletProvider(
+        process.env.privateKeys,
+        process.env.BSC_RPC_URL
+    ),
+    network_id: 97,
+    skipDryRun: true
+  }
+
+},
+
+  
   
   plugins: [
     'truffle-plugin-verify'
   ],
   api_keys: {
-    etherscan: process.env.ETHERSCAN_API_KEY
+    etherscan: process.env.ETHERSCAN_API_KEY,
+    bscscan: process.env.BSCSCAN_API_KEY
+    
   },
 
   // Set default mocha options here, use special reporters, etc.

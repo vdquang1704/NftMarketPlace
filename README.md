@@ -51,5 +51,5 @@ truffle migrate --reset --network "network's name"
 # Verify
 
 ```bash
-truffle verify "Smart Contract's name" --network "network's name"
+truffle run verify "Smart Contract's name" --network "network's name"
 ```
