@@ -7,7 +7,7 @@ contract ERC20_Token is ERC20 {
     address public admin;
 
     constructor() ERC20("VuDucQuang", "VDQ") {
-        _mint(msg.sender, 100 * 10**18);
+        _mint(msg.sender, 1000 * 10**18);
         admin = msg.sender;
     }
 
