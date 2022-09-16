@@ -19,8 +19,10 @@ error NotListedERC20(address tokenAddress);
 contract NftMarketplace is Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _listingIds;
+    Counters.Counter private _listingERC20;
     uint256 public tokenERC20Sold;
     uint256 public tokenERC20Listing;
+    ListingERC20[] public sellerList;
 
     struct ListingERC1155 {
         address nftAddress;
@@ -38,6 +40,7 @@ contract NftMarketplace is Ownable {
     }
 
     struct ListingERC20 {
+        address tokenAddress;
         uint256 price;
         address seller;
         uint256 amount;
@@ -45,7 +48,7 @@ contract NftMarketplace is Ownable {
 
     mapping(uint256 => ListingERC1155) private ERC1155List;
     mapping(address => mapping(uint256 => ListingERC721)) private ERC721List;
-    mapping(address => ListingERC20) private ERC20List;
+    mapping(uint256 => ListingERC20) private ERC20List;
     mapping(address => uint256) private ERC721Proceeds;
 
     event ERC1155Listed(
@@ -102,12 +105,16 @@ contract NftMarketplace is Ownable {
         _;
     }
 
-    // modifier isOwnerERC20(address tokenAddress) {
-    //     address owner = ERC20List[tokenAddress].seller;
-    // }
-
     modifier isOwnerERC1155(uint256 listingId, address spender) {
         address owner = ERC1155List[listingId].seller;
+        if (spender != owner) {
+            revert NotOwner();
+        }
+        _;
+    }
+
+    modifier isOwnerERC20(uint256 listingERC20, address spender) {
+        address owner = ERC20List[listingERC20].seller;
         if (spender != owner) {
             revert NotOwner();
         }
@@ -134,10 +141,10 @@ contract NftMarketplace is Ownable {
         _;
     }
 
-    modifier isListedERC20(address tokenAddress) {
-        ListingERC20 memory listing = ERC20List[tokenAddress];
+    modifier isListedERC20(uint256 listingERC20) {
+        ListingERC20 memory listing = ERC20List[listingERC20];
         if (listing.price <= 0 || listing.amount <= 0) {
-            revert NotListedERC20(tokenAddress);
+            revert NotListedERC20(ERC20List[listingERC20].tokenAddress);
         }
         _;
     }
@@ -193,11 +200,15 @@ contract NftMarketplace is Ownable {
         uint256 amount,
         uint256 price
     ) external {
+        ERC20 token = ERC20(tokenAddress);
+        _listingERC20.increment();
+        uint256 listingERC20 = _listingERC20.current();
         tokenERC20Listing += amount;
-        ERC20List[tokenAddress] = ListingERC20(
+        ERC20List[listingERC20] = ListingERC20(
+            tokenAddress,
             price,
             msg.sender,
-            tokenERC20Listing
+            amount
         );
         emit ERC20Listed(tokenAddress, msg.sender, price, tokenERC20Listing);
     }
@@ -241,7 +252,7 @@ contract NftMarketplace is Ownable {
         );
 
         require(
-            msg.value >= ERC1155List[listingId].price * amount,
+            msg.value >= ERC1155List[listingId].price * (amount / (10**18)),
             "You do not have enough token to buy this nft"
         );
 
@@ -284,33 +295,33 @@ contract NftMarketplace is Ownable {
         );
 
         payable(ERC1155List[listingId].seller).transfer(
-            ERC1155List[listingId].price * amount
+            ((amount / (10**18)) * ERC1155List[listingId].price)
         );
     }
 
-    function buyItemERC20(address tokenAddress, uint256 amount)
+    function buyItemERC20(uint256 listingERC20, uint256 amount)
         external
         payable
     {
-        ERC20 token = ERC20(tokenAddress);
+        ERC20 token = ERC20(ERC20List[listingERC20].tokenAddress);
         require(
-            msg.value >= ((amount * ERC20List[tokenAddress].price)),
+            msg.value >= ((amount / (10**18)) * ERC20List[listingERC20].price),
             "You don't have enough money"
         );
-        tokenERC20Sold += amount;
-        tokenERC20Listing -= amount;
-        ERC20List[tokenAddress] = ListingERC20(
-            ERC20List[tokenAddress].price,
-            ERC20List[tokenAddress].seller,
-            tokenERC20Listing
-        );
-        token.transferFrom(ERC20List[tokenAddress].seller, msg.sender, amount);
 
-        payable(ERC20List[tokenAddress].seller).transfer(
-            ERC20List[tokenAddress].price * amount
+        ERC20List[listingERC20].amount -= amount;
+
+        token.transferFrom(ERC20List[listingERC20].seller, msg.sender, amount);
+
+        payable(ERC20List[listingERC20].seller).transfer(
+            ((amount / (10**18)) * ERC20List[listingERC20].price)
         );
 
-        emit ERC20Sold(tokenAddress, msg.sender, tokenERC20Sold);
+        emit ERC20Sold(
+            ERC20List[listingERC20].tokenAddress,
+            msg.sender,
+            tokenERC20Sold
+        );
     }
 
     function updateListingERC721(
@@ -339,12 +350,16 @@ contract NftMarketplace is Ownable {
     }
 
     function updateListingERC20(
-        address tokenAddress,
+        uint256 listingERC20,
         uint256 newPrice,
         uint256 newAmount
-    ) external isListedERC20(tokenAddress) {
-        ERC20List[tokenAddress].price = newPrice;
-        ERC20List[tokenAddress].amount = newAmount;
+    )
+        external
+        isListedERC20(listingERC20)
+        isOwnerERC20(listingERC20, msg.sender)
+    {
+        ERC20List[listingERC20].price = newPrice;
+        ERC20List[listingERC20].amount = newAmount;
     }
 
     function getListingERC721(address nftAddress, uint256 tokenId)
@@ -363,17 +378,13 @@ contract NftMarketplace is Ownable {
         return ERC1155List[listingId];
     }
 
-    function getListingERC20(address tokenAddress)
+    function getListingERC20(uint256 listingERC20)
         external
         view
         returns (ListingERC20 memory)
     {
-        return ERC20List[tokenAddress];
+        return ERC20List[listingERC20];
     }
-
-    // function getProceeds(address seller) external view returns (uint256) {
-    //     return ERC721Proceeds[seller];
-    // }
 
     function cancelListingERC721(address nftAddress, uint256 tokenId)
         external
@@ -395,11 +406,12 @@ contract NftMarketplace is Ownable {
         delete (ERC1155List[listingId]);
     }
 
-    function cancelListingERC20(address tokenAddress)
+    function cancelListingERC20(uint256 listingERC20)
         external
-        isListedERC20(tokenAddress)
+        isOwnerERC20(listingERC20, msg.sender)
+        isListedERC20(listingERC20)
     {
-        delete (ERC20List[tokenAddress]);
+        delete (ERC20List[listingERC20]);
     }
 
     function withdrawProceeds() external {
