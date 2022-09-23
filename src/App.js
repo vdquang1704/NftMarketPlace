@@ -1,24 +1,83 @@
-import logo from './logo.svg';
-import './App.css';
+// import logo from './logo.svg';
+import {BrowserRouter, Routes, Route} from "react-router-dom";
+import Home from './components/Home.js';
+import MyPurchases from "./components/MyPurchases.js";
+import MyListedItems from "./components/MylistItems.js";
+import Navigation from "./components/NavBar.js";
+import Create from "./components/ListFeature/ERC721List.js"
+import MarketplaceABI from "./ABI/NftMarketplace.json"
+import MarketplaceAddress from "./ABI/NftMarketplace-address.json"
+import { useState } from "react";
+import { ethers } from "ethers";
+import { Spinner} from "react-bootstrap";
+
+import './App.css'
 
 function App() {
+  
+  const [loading, setLoading] = useState(true)
+  const [account, setAccount] = useState(null)
+  const [nft, setNFT] = useState({})
+  const [marketplace, setMarketplace] = useState({})
+  // MetaMask Login/Connect
+  const web3Handler = async () => {
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    setAccount(accounts[0])
+    // Get provider from Metamask
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    // Set signer
+    const signer = provider.getSigner()
+
+    window.ethereum.on('chainChanged', (chainId) => {
+      window.location.reload();
+    })
+
+    window.ethereum.on('accountsChanged', async function (accounts) {
+      setAccount(accounts[0])
+      await web3Handler()
+    })
+    loadContracts(signer)
+  }
+
+  const loadContracts = async (signer) => {
+    // Get deployed copies of contracts
+    const marketplace = new ethers.Contract(MarketplaceAddress.address, MarketplaceABI.abi, signer)
+    setMarketplace(marketplace)
+    setLoading(false)
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      <div className="App">
+        <>
+          <Navigation web3Handler={web3Handler} account={account} />
+        </>
+        <div>
+          {loading ? (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
+              <Spinner animation="border" style={{ display: 'flex' }} />
+              <p className='mx-3 my-0'>Awaiting Metamask Connection...</p>
+            </div>
+          ) : (
+            <Routes>
+              <Route path="/" element={
+                <Home marketplace={marketplace} nft={nft} />
+              } />
+              <Route path="/create" element={
+                <Create marketplace={marketplace} nft={nft} />
+              } />
+              <Route path="/my-listed-items" element={
+                <MyListedItems marketplace={marketplace} nft={nft} account={account} />
+              } />
+              <Route path="/my-purchases" element={
+                <MyPurchases marketplace={marketplace} nft={nft} account={account} />
+              } />
+            </Routes>
+          )}
+        </div>
+      </div>
+    </BrowserRouter>
+
   );
 }
 
