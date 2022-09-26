@@ -1,7 +1,7 @@
 import {
     Link
 } from "react-router-dom";
-import { Navbar, Nav, Button, Container } from 'react-bootstrap'
+import { Navbar, Nav, Button, Container, NavDropdown } from 'react-bootstrap'
 import market from './market.png'
 
 const Navigation = ({ web3Handler, account }) => {
@@ -16,8 +16,37 @@ const Navigation = ({ web3Handler, account }) => {
                 <Navbar.Collapse id="responsive-navbar-nav">
                     <Nav className="me-auto">
                         <Nav.Link as={Link} to="/">Home</Nav.Link>
-                        <Nav.Link as={Link} to="/create">List Nfts</Nav.Link>
-                        <Nav.Link as={Link} to="/my-listed-items">My Listed Items</Nav.Link>
+                        <Nav>
+                            <NavDropdown
+                            id="nav-dropdown-dark-example"
+                            title="List Nfts"
+                            menuVariant="dark"
+                            >
+                            <NavDropdown.Item href="List_ERC721" as={Link} to="/list-ERC721"> List ERC721
+                            </NavDropdown.Item>
+                            <NavDropdown.Item href="List_ERC1155" as={Link} to="/list-ERC1155"> 
+                            List ERC1155 </NavDropdown.Item>
+                            <NavDropdown.Item href="List_ERC20" as={Link} to="/list-ERC20"> List ERC20 
+                            </NavDropdown.Item>
+                            </NavDropdown>
+                        </Nav>
+
+                        <Nav>
+                            <NavDropdown
+                            id="nav-dropdown-dark-example"
+                            title="My listed Items"
+                            menuVariant="dark"
+                            >
+                            <NavDropdown.Item href="ERC721" as={Link} to="/listed-ERC721"> ERC721
+                            </NavDropdown.Item>
+                            <NavDropdown.Item href="ERC1155" as={Link} to="/listed-ERC1155"> 
+                            ERC1155 </NavDropdown.Item>
+                            <NavDropdown.Item href="ERC20" as={Link} to="/listed-ERC20"> ERC20 
+                            </NavDropdown.Item>
+                            </NavDropdown>
+                        </Nav>
+                        
+                        {/* <Nav.Link as={Link} to="/my-listed-items">My Listed Items</Nav.Link> */}
                         <Nav.Link as={Link} to="/my-purchases">My Purchases</Nav.Link>
                     </Nav>
                     <Nav>

@@ -2,9 +2,16 @@
 import {BrowserRouter, Routes, Route} from "react-router-dom";
 import Home from './components/Home.js';
 import MyPurchases from "./components/MyPurchases.js";
-import MyListedItems from "./components/MylistItems.js";
 import Navigation from "./components/NavBar.js";
-import Create from "./components/ListFeature/ERC721List.js"
+
+import List_ERC721 from "./feature/Listing_Items/ERC721List.js";
+import List_ERC1155 from "./feature/Listing-Items/ERC1155List.js";
+import List_ERC20 from "./feature/Listing_Items/ERC20List.js"
+
+import ERC721_Listed from "./feature/Listed_Items/ERC721_Listed.js";
+import ERC1155_Listed from "./feature/Listed_Items/ERC1155_Listed.js";
+import ERC20_Listed from "./feature/Listed_Items/ERC20_Listed.js";
+
 import MarketplaceABI from "./ABI/NftMarketplace.json"
 import MarketplaceAddress from "./ABI/NftMarketplace-address.json"
 import { useState } from "react";
@@ -12,6 +19,7 @@ import { ethers } from "ethers";
 import { Spinner} from "react-bootstrap";
 
 import './App.css'
+
 
 function App() {
   
@@ -63,13 +71,27 @@ function App() {
               <Route path="/" element={
                 <Home marketplace={marketplace} nft={nft} />
               } />
-              <Route path="/create" element={
-                <Create marketplace={marketplace} nft={nft} />
+              <Route path="/list-ERC721" element={
+                <List_ERC721 marketplace={marketplace} nft={nft} />
               } />
-              <Route path="/my-listed-items" element={
-                <MyListedItems marketplace={marketplace} nft={nft} account={account} />
+              <Route path="/list-ERC1155" element={
+                <List_ERC1155 marketplace={marketplace} nfts={nft} />
               } />
-              <Route path="/my-purchases" element={
+              <Route path="/list-ERC20" element={
+                <List_ERC20 marketplace={marketplace} />
+              } />
+              
+              <Route path="/listed-ERC721" element={
+                <ERC721_Listed marketplace={marketplace} nft={nft} account={account} />
+              } />
+              <Route path="/listed-ERC1155" element={
+                <ERC1155_Listed marketplace={marketplace} nfts={nft} account={account} />
+              } />
+              <Route path="/listed-ERC20" element={
+                <ERC20_Listed marketplace={marketplace} account={account} />
+              } />
+
+             <Route path="/my-purchases" element={
                 <MyPurchases marketplace={marketplace} nft={nft} account={account} />
               } />
             </Routes>
