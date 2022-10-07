@@ -8,17 +8,35 @@ const List_ERC721 = ({ marketplace, nft }) => {
   const [price, setPrice] = useState(null)
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
+
+  
+  const listERC721 = async () => {
+    if (!price || !name || !description) return 
+    try {
+     createERC721()
+    } catch(error) {
+      console.log("List ERC721 error", error)
+    }
+  }
   
 
-  const listERC721 = async (result) => {
-   
-    const id = await nft.tokenId
+  const createERC721 = async () => {
+    // mint nft
+    await(await nft.mintNft()).wait()
+    // get TokenId
+    const id = await nft.tokenCounter()
+    
     // approve marketplace to spend nft
+    console.log("Id: ", Number(id))
+    console.log("Id1: ", 18)
     await(await nft.setApprovalForAll(marketplace.address, true)).wait()
     // add nft to marketplace
     const listingPrice = ethers.utils.parseEther(price.toString())
-    await(await marketplace.listItemERC721(nft.address, id, listingPrice)).wait()
+   
+    await(await marketplace.listItemERC721(nft.address, Number(id)-1, listingPrice)).wait()
   }
+
+  
   return (
     <div className="container-fluid mt-5">
       <div className="row">

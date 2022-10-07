@@ -1,85 +1,110 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect } from 'react'
 import { ethers } from "ethers"
-import { Row, Col, Card } from "react-bootstrap"
+import { Row, Button, Table, Form } from 'react-bootstrap'
 
-function renderSoldItems(items) {
- return (
-  <>
-   <h2>Sold</h2>
-   <Row xs={1} md={2} lg={4} className="g-4 py-3">
-    {items.map((item, idx) => (
-     <Col key={idx} className="overflow-hidden">
-      <Card>
-       <Card.Footer>
-        For {ethers.utils.formatEther(item.price)} ETH
-        For {ethers.utils.formatEther(item.amount)}
-       </Card.Footer>
-      </Card>
-     </Col>
-    ))}
-   </Row>
-  </>
-  )
-}
-
-export default function ERC1155_Listed ({ marketplace, nfts, account }) {
- const [loading, setLoading] = useState(true)
- const [listedItems, setListedItems] = useState([])
- const [soldItems, setSoldItems] = useState([])
- const loadListedItems = async () => {
- // Load all sold items that user listed
- const itemCount = await marketplace._listingIds()
- let listedItems = []
- let soldItems = []
- for (let idx = 1; idx <= itemCount; idx++) {
-  const i = await marketplace.ERC1155List[idx]
-  if (i.seller.toLowerCase() === account) {
-   let item = {
-    address: i.nftAddress,
-    price: i.price,
-    tokenId: i.tokenId,
-    amount: i.amount
-   }
-   listedItems.push(item)
-   // Add listed item to sold items array if sold
-    // soldItems.push(item)
-   }
+export default function ERC1155_Listed({ marketplace, nft, account }) {
+  const [loading, setLoading] = useState(true)
+  const [listedItems, setListedItems] = useState([])
+  // const [amount, setAmount] = useState(null)
+  // const [price, setPrice] = useState(null)
+  
+  const loadListedItems = async () => {
+    // Load all sold items that the user listed
+    const itemCount = await marketplace._listingIds();
+    console.log("itemCount: ", itemCount.toString() )
+    let listedItems = []
+    // let soldItems = []
+    console.log("check list")
+    for (let indx = 1; indx <= itemCount; indx++) {
+      const i = await marketplace.ERC1155List(indx)
+        if (i.seller.toLowerCase() === account) {
+          
+       // define listed item object
+      let item = {
+        itemId: i.itemId,
+        nftAddress: i.nftAddress,
+        tokenId: i.tokenId,
+        price: i.price,
+        token: i.tokenAvailable
+      
+      }
+      listedItems.push(item)
+      console.log("listedItem: ", listedItems[indx])
+      }
+    }
+    console.log("check setLoading")
+    setLoading(false)
+    setListedItems(listedItems)
+    // setSoldItems(soldItems)
   }
-  setLoading(false)
-  setListedItems(listedItems)
-  // setSoldItems(soldItems)
- }
- useEffect(() => {
-  loadListedItems()
- }, [])
- if (loading) return (
-  <main style={{ padding: "1rem 0"}}>
-   <h2>Loading...</h2>
-  </main>
- )
- return (
-  <div className="flex justify-center">
-   {listedItems.length > 0 ? 
-    <div className="px-5 py-3 container"> 
-      <h2>Listed</h2>
-     <Row xs={1} md={2} lg={4} className="g-4 py-3">
-      {listedItems.map((item, idx) => (
-       <Col key={idx} className="overflow-hidden">
-        <Card>
-         <Card.Footer>{ethers.utils.formatEther(item.price)} ETH </Card.Footer>
-         <Card.Footer>{ethers.utils.formatEther(item.amount)}</Card.Footer>
-        </Card>
-       </Col>
-      ))}
-     </Row>
-       {soldItems.length > 0 && renderSoldItems(soldItems)}
+
+  const cancelListingItem = async (listingId, address, tokenId) => {
+    await(await marketplace.cancelListingERC1155(listingId, address, tokenId)).wait()
+    loadListedItems()
+  }
+  
+  useEffect(() => {
+    loadListedItems()
+  }, [])
+  if (loading) return (
+    <main style={{ padding: "1rem 0" }}>
+      <h2>Loading...</h2>
+    </main>
+  )
+  return (
+    <div className="flex justify-center">
+      {listedItems.length > 0 ?
+        <div className="px-5 py-3 container">
+            <h2>Listed</h2>
+          <Row xs={1} md={12} lg={12} className="g-4 py-3">
+          <Table striped bordered hover responsive>
+        <thead>
+          <tr>
+            <th>Nft Address</th>
+            <th>Token ID</th>
+            <th>Token Available</th>
+            <th>Cancel Listing</th>
+            {/* <th>Update Listing</th> */}
+          </tr>
+        </thead>
+        <tbody>
+            {listedItems.map((item, idx) => (
+              <tr>
+              <td>{item.nftAddress}</td>
+              <td>{(item.tokenId).toString()}</td>
+              <td>{ethers.utils.formatEther(item.token)}</td>
+              <td>
+                <Button onClick={() =>
+               cancelListingItem(item.itemId, item.nftAddress, item.tokenId)}
+               variant="primary" size="sm">
+                Cancel this ERC1155
+               </Button></td>
+               
+            </tr>
+              // <Col key={idx} className="overflow-hidden">
+              //   <Card>
+              //     {/* <Card.Img variant="top" src={item.seller} /> */}
+              //     <Card.Body color="secondary">
+              //     <Card.Title>Nft Address {item.nftAddress}
+              //     Seller: {item.seller}
+              //     </Card.Title>
+                  
+              //     </Card.Body>
+              //     <Card.Footer>Price: {ethers.utils.formatEther(item.price)} ETH</Card.Footer>
+              //   </Card>
+              // </Col>
+            ))}
+
+        </tbody>
+         </Table>
+          </Row>
+            
+        </div>
+        : (
+          <main style={{ padding: "1rem 0" }}>
+            <h2>No listed assets</h2>
+          </main>
+        )}
     </div>
-    : (
-     <main style={{ padding: "1rem 0"}}>
-       <h2> This items were sold !!!</h2>
-     </main>
-    )
-   }
-  </div>
- )
+  );
 }

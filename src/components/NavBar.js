@@ -3,9 +3,12 @@ import {
 } from "react-router-dom";
 import { Navbar, Nav, Button, Container, NavDropdown } from 'react-bootstrap'
 import market from './market.png'
+import background1 from '../asset/monkey.png'
 
 const Navigation = ({ web3Handler, account }) => {
     return (
+        <div>
+            {/* <img src={background1} width="100%" height="100%" className="" alt="" /> */}
         <Navbar expand="lg" bg="secondary" variant="dark">
             <Container>
                 <Navbar.Brand>
@@ -15,7 +18,22 @@ const Navigation = ({ web3Handler, account }) => {
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
                 <Navbar.Collapse id="responsive-navbar-nav">
                     <Nav className="me-auto">
-                        <Nav.Link as={Link} to="/">Home</Nav.Link>
+                        {/* <Nav.Link as={Link} to="/">Home</Nav.Link> */}
+                        <Nav>
+                            <NavDropdown
+                            id="nav-dropdown-dark-example"
+                            title="Home"
+                            menuVariant="dark"
+                            >
+                            <NavDropdown.Item href="Item_ERC721" as={Link} to="/item-ERC721"> Items ER721
+                            </NavDropdown.Item>
+                            <NavDropdown.Item href="Item_ERC1155" as={Link} to="/item-ERC1155"> 
+                            Items ERC1155 </NavDropdown.Item>
+                            <NavDropdown.Item href="Item_ERC20" as={Link} to="/item-ERC20"> Items ERC20
+                            </NavDropdown.Item>
+                            </NavDropdown>
+                        </Nav>
+                        
                         <Nav>
                             <NavDropdown
                             id="nav-dropdown-dark-example"
@@ -45,9 +63,24 @@ const Navigation = ({ web3Handler, account }) => {
                             </NavDropdown.Item>
                             </NavDropdown>
                         </Nav>
+
+                        <Nav>
+                            <NavDropdown
+                            id="nav-dropdown-dark-example"
+                            title="My Purchases"
+                            menuVariant="dark"
+                            >
+                            <NavDropdown.Item href="ERC721_Purchases" as={Link} to="/purchase-ERC721"> ERC721_Purchases
+                            </NavDropdown.Item>
+                            <NavDropdown.Item href="ERC1155_Purchases" as={Link} to="/purchase-ERC1155"> 
+                            ERC1155_Purchases </NavDropdown.Item>
+                            <NavDropdown.Item href="ERC20_Purchases" as={Link} to="/purchase-ERC20"> ERC20_Purchases 
+                            </NavDropdown.Item>
+                            </NavDropdown>
+                        </Nav>
                         
-                        {/* <Nav.Link as={Link} to="/my-listed-items">My Listed Items</Nav.Link> */}
-                        <Nav.Link as={Link} to="/my-purchases">My Purchases</Nav.Link>
+                        
+                        {/* <Nav.Link as={Link} to="/my-purchases">My Purchases</Nav.Link> */}
                     </Nav>
                     <Nav>
                         {account ? (
@@ -68,6 +101,7 @@ const Navigation = ({ web3Handler, account }) => {
                 </Navbar.Collapse>
             </Container>
         </Navbar>
+        </div>
     )
 
 }
