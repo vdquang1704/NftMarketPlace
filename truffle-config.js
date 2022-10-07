@@ -27,9 +27,17 @@ module.exports = {
       network_id: 42,
       skipDryRun: true //true if you don't want to test run the migration locally before the actual migration
     },
-   
-  
 
+    goerli: {
+      provider: () => new
+      HDWalletProvider(
+        process.env.privateKeys,
+        process.env.GOERLI_INF_URL
+      ),
+      network_id: 5,
+      skipDryRun: true
+    },
+   
     bscTestnet: {
       provider: () => new HDWalletProvider(
         process.env.privateKeys,
