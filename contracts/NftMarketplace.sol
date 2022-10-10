@@ -9,6 +9,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 error NotOwner();
 error AlreadyListed(address nftAddress, uint256 tokenId);
@@ -17,6 +18,7 @@ error NotListedERC1155(uint256 listingId);
 error NotListedERC20(address tokenAddress);
 
 contract NftMarketplace is Ownable {
+    using SafeMath for uint256;
     using Counters for Counters.Counter;
     Counters.Counter public _listingIds;
     Counters.Counter public _listingERC20;
@@ -264,7 +266,7 @@ contract NftMarketplace is Ownable {
         );
 
         require(
-            msg.value >= ERC1155List[listingId].price * amount,
+            msg.value >= ERC1155List[listingId].price * (amount / 10**18),
             "You do not have enough token to buy this nft"
         );
 
