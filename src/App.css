@@ -36,3 +36,12 @@
     transform: rotate(360deg);
   }
 }
+
+.content{
+  min-height: 100vh;
+  background-image: url('./asset/axie.png');
+  object-fit: cover;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { ethers } from "ethers"
 import { Row, Button, Table, Form} from "react-bootstrap"
+import { formatEther } from "ethers/lib/utils"
 
 const Home_ERC1155 = ({ marketplace, nft }) => {
  const [loading, setLoading] = useState(true)
@@ -15,7 +16,7 @@ const Home_ERC1155 = ({ marketplace, nft }) => {
     if (item.amount != 0) {
       console.log("price: ", (item.price).toString())
       console.log("amount: ", (item.amount).toString())
-      console.log("TotalPrice", (item.price * item.amount).toString())
+      console.log("TotalPrice", ((ethers.utils.formatEther((item.amount).toString()) * item.price )).toString())
     items.push({
       itemId: item.itemId,
       nftAddress: item.nftAddress,
@@ -54,6 +55,7 @@ const Home_ERC1155 = ({ marketplace, nft }) => {
      <Table striped bordered hover responsive>
          <thead>
         <tr>
+          <th>Item Id</th>
           <th>Nft Address</th>
           <th>Seller</th>
           <th>Token ID</th>
@@ -65,6 +67,7 @@ const Home_ERC1155 = ({ marketplace, nft }) => {
       <tbody>
       {items.map((item, idx) => (
         <tr>
+          <td>{(item.itemId).toString()}</td>
           <td>{item.nftAddress}</td>
           <td>{item.seller}{}</td>
           <td>{(item.tokenId).toString()}</td>
@@ -72,7 +75,7 @@ const Home_ERC1155 = ({ marketplace, nft }) => {
           <td>  <Form.Control onChange={(e) => setAmount(e.target.value)} size="sm"/></td>
           <td>
             <Button onClick={() =>
-           buyMarketItem(item.itemId, ethers.utils.parseEther(amount.toString()), {value: ethers.utils.parseEther(amount.toString()) * item.price})}
+           buyMarketItem(item.itemId, ethers.utils.parseEther(amount.toString()), {value: amount * item.price})}
            variant="primary" size="sm">
             Buy for {ethers.utils.formatEther
             (item.price)} ETH/nft

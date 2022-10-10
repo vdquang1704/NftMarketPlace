@@ -49,7 +49,7 @@ const Home_ERC721 = ({ marketplace, nft }) => {
   <div className="flex justify-center">
    {listedItems.length > 0 ? 
     <div className="px-5 container">
-     <Row xs={1} md={12} lg={12} className="g-4 py-5">
+     <Row xs={1} md={15} lg={15} className="g-4 py-5">
      <Table striped bordered hover responsive>
          <thead>
         <tr>

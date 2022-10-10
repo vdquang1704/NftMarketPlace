@@ -87,7 +87,7 @@ function App() {
           <Navigation web3Handler={web3Handler} account={account} />
           {/* <img src={background1} width="100%" height="100%" className="" alt="" /> */}
         </>
-        <div>
+        <div class="content">
         
           {loading ? (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh', background: "background1"}}>

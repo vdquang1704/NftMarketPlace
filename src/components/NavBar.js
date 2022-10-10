@@ -2,17 +2,17 @@ import {
     Link
 } from "react-router-dom";
 import { Navbar, Nav, Button, Container, NavDropdown } from 'react-bootstrap'
-import market from './market.png'
-import background1 from '../asset/monkey.png'
+import market from '../asset/nft.png'
+
 
 const Navigation = ({ web3Handler, account }) => {
     return (
         <div>
-            {/* <img src={background1} width="100%" height="100%" className="" alt="" /> */}
-        <Navbar expand="lg" bg="secondary" variant="dark">
+            
+        <Navbar expand="lg" bg="success" variant="dark">
             <Container>
                 <Navbar.Brand>
-                    <img src={market} width="40" height="40" className="" alt="" />
+                    <img src={market} width="50" height="50" className="" alt="" />
                     &nbsp; NFT Marketplace
                 </Navbar.Brand>
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
