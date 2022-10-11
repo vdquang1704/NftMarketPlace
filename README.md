@@ -8,7 +8,7 @@
 1. Install truffle
 
 ```bash
-nom install -g truffle
+npm install -g truffle
 ```
 
 2. Install ganache-cli for local testing

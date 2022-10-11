@@ -260,13 +260,14 @@ contract NftMarketplace is Ownable {
         payable
     {
         ERC1155 nft = ERC1155(ERC1155List[listingId].nftAddress);
+        uint256 listingAmount = amount / 10**18;
         require(
             msg.sender != ERC1155List[listingId].seller,
             "You can not buy this nft"
         );
 
         require(
-            msg.value >= ERC1155List[listingId].price * (amount / 10**18),
+            msg.value >= listingAmount * ERC1155List[listingId].price,
             "You do not have enough token to buy this nft"
         );
 
@@ -318,8 +319,9 @@ contract NftMarketplace is Ownable {
         payable
     {
         ERC20 token = ERC20(ERC20List[listingERC20].tokenAddress);
+        uint256 listingAmount = amount / 10**18;
         require(
-            msg.value >= (ERC20List[listingERC20].price),
+            msg.value >= listingAmount * ERC20List[listingERC20].price,
             "You don't have enough money"
         );
 
@@ -334,7 +336,7 @@ contract NftMarketplace is Ownable {
         emit ERC20Sold(
             ERC20List[listingERC20].tokenAddress,
             msg.sender,
-            tokenERC20Sold
+            amount
         );
     }
 
