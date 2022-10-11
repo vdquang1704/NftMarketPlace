@@ -68,7 +68,7 @@ export default function ERC1155_Purchases({ marketplace, nft, account }) {
                  <td>{item.nftAddress}</td>
                  <td>{item.seller}{}</td>
                  <td>{(item.tokenId).toString()}</td>
-                 <td>{(item.amount).toString()}</td>
+                 <td>{ethers.utils.formatEther(item.amount)}</td>
                  
               </tr>
                   // <Col key={idx} className="overflow-hidden">

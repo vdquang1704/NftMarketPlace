@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react"
 import { ethers } from "ethers"
-import { Row, Button, Table, Form} from "react-bootstrap"
+import { Row, Button, Table, Form, Modal, Col, Card} from "react-bootstrap"
 import { formatEther } from "ethers/lib/utils"
 
 const Home_ERC1155 = ({ marketplace, nft }) => {
  const [loading, setLoading] = useState(true)
  const [items, setItems] = useState([])
  const [amount, setAmount] = useState(null)
+ const [show, setShow] = useState(false)
+ const handleClose = () => setShow(false)
+ const handleShow = () => setShow(true)
  const loadMarketplaceItems = async () => {
   // Load all unsold items
   const itemCount = await marketplace._listingIds()
@@ -73,37 +76,43 @@ const Home_ERC1155 = ({ marketplace, nft }) => {
           <td>{(item.tokenId).toString()}</td>
           <td>{ethers.utils.formatEther(item.token)}</td>
           <td>  <Form.Control onChange={(e) => setAmount(e.target.value)} size="sm"/></td>
-          <td>
-            <Button onClick={() =>
-           buyMarketItem(item.itemId, ethers.utils.parseEther(amount.toString()), {value: amount * item.price})}
-           variant="primary" size="sm">
-            Buy for {ethers.utils.formatEther
-            (item.price)} ETH/nft
-           </Button></td>
+  <td>
+    <>
+      <Button variant="primary" size="sm" onClick={handleShow}>
+        Buy for {ethers.utils.formatEther(item.price)}
+        ETH/token
+      </Button>
+
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Are you sure you want to buy this item !</Modal.Title>
+        </Modal.Header>
+        
+        <Col key={idx} className="overflow-hidden">
+        <Card>
+        <Card.Body color="primary"> 
+        <Card.Text>Nft Address: {item.nftAddress}</Card.Text>
+        <Card.Text>Token Id: {(item.tokenId).toString()}</Card.Text>
+        <Card.Text>Amount: {amount}</Card.Text>
+        <Card.Text>Price: {ethers.utils.formatEther(item.price)} ETH/token</Card.Text>
+        </Card.Body>
+        </Card>
+        </Col>
+       
+        <Modal.Footer onHide={handleClose}>
+          <Button variant="primary" onClick={() =>
+           buyMarketItem(item.itemId, ethers.utils.parseEther(amount.toString()), {value: amount * item.price})}>
+            YES
+          </Button>
+          <Button variant="secondary"  onClick={handleClose}>
+            NO
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
+           </td>
         </tr>
-      //  <Col key={idx} className="overflow-hidden">
-      //   <Card>
-      //    {/* <Card.Img variant="top" src={item.image} /> */}
-      //    <Card.Body color="secondary">
-      //     <Card.Title>
-      //       nft Address {item.nftAddress}
-      //       Seller {item.seller}</Card.Title>
-      //     <Card.Text>
-      //      {item.description}
-      //     </Card.Text>
-      //    </Card.Body>
-      //    <Card.Footer> 
-      //     <div className="d-grid">
-      //      <Button onClick={() =>
-      //      buyMarketItem(idx)}
-      //      variant="primary" size="lg">
-      //       Buy for {ethers.utils.formatEther
-      //       (item.price)} ETH
-      //      </Button>
-      //     </div>
-      //    </Card.Footer>
-      //   </Card>
-      //  </Col>
+   
       ))}
       </tbody>
          </Table>

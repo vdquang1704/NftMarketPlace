@@ -81,19 +81,7 @@ export default function ERC1155_Listed({ marketplace, nft, account }) {
                </Button></td>
                
             </tr>
-              // <Col key={idx} className="overflow-hidden">
-              //   <Card>
-              //     {/* <Card.Img variant="top" src={item.seller} /> */}
-              //     <Card.Body color="secondary">
-              //     <Card.Title>Nft Address {item.nftAddress}
-              //     Seller: {item.seller}
-              //     </Card.Title>
-                  
-              //     </Card.Body>
-              //     <Card.Footer>Price: {ethers.utils.formatEther(item.price)} ETH</Card.Footer>
-              //   </Card>
-              // </Col>
-            ))}
+          ))}
 
         </tbody>
          </Table>

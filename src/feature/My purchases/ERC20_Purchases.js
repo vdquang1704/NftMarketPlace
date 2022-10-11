@@ -2,13 +2,13 @@ import { useState, useEffect } from "react"
 import { ethers } from "ethers"
 import { Row, Table} from "react-bootstrap"
 
-export default function ERC1155_Purchases({ marketplace, nft, account }) {
+export default function ERC20_Purchases({ marketplace, nft, account }) {
     const [loading, setLoading] = useState(true)
     const [purchases, setPurchases] = useState([])
     console.log("check loadPurchasedItem")
     const loadPurchasedItems = async () => {
         //Fetch purchased items from marketplace by querying Offered events with the buyer set as the user
-        const filter = marketplace.filters.ERC1155Sold(null, account, null)
+        const filter = marketplace.filters.ERC20Sold(null, account, null)
         console.log("check filter")
         const results = await marketplace.queryFilter(filter)
         //Fetch metadata of each nft and add to listedItem object
@@ -26,7 +26,6 @@ export default function ERC1155_Purchases({ marketplace, nft, account }) {
             // define listed item object
             let purchasedItem = {
                 tokenAddress: i.tokenAddress,
-                seller: i.seller,
                 amount: i.amount
             }
             return purchasedItem
@@ -63,7 +62,7 @@ export default function ERC1155_Purchases({ marketplace, nft, account }) {
                 {purchases.map((item, idx) => (
                  <tr>
                  <td>{item.tokenAddress}</td>
-                 <td>{(item.amount).toString()}</td>
+                 <td>{ethers.utils.formatEther(item.amount)}</td>
                  
               </tr>
                   // <Col key={idx} className="overflow-hidden">
