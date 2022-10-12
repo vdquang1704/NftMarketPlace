@@ -77,7 +77,7 @@ const Home_ERC20 = ({ marketplace, nft }) => {
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Are you sure you want to buy this item !</Modal.Title>
+          <Modal.Title>Are you sure you want to buy this item ?</Modal.Title>
         </Modal.Header>
         
         <Col key={idx} className="overflow-hidden">

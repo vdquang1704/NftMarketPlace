@@ -79,13 +79,13 @@ const Home_ERC1155 = ({ marketplace, nft }) => {
   <td>
     <>
       <Button variant="primary" size="sm" onClick={handleShow}>
-        Buy for {ethers.utils.formatEther(item.price)}
-        ETH/token
+        Buy for { ethers.utils.formatEther(item.price) }
+         ETH/token
       </Button>
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Are you sure you want to buy this item !</Modal.Title>
+          <Modal.Title>Are you sure you want to buy this item ?</Modal.Title>
         </Modal.Header>
         
         <Col key={idx} className="overflow-hidden">
