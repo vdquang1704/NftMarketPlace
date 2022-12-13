@@ -3,7 +3,7 @@ pragma solidity ^0.8.16;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
-contract ERC721_token is ERC721 {
+contract ERC721_Token is ERC721 {
     uint256 public tokenCounter;
 
     event PugMinted(uint256 indexed tokenId);
