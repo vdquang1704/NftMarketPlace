@@ -11,7 +11,8 @@ const Home_ERC721 = ({ marketplace, nft }) => {
  const handleShow = () => setShow(true)
  const loadMarketplaceItems = async () => {
   // Load all unsold items
-  const itemCount = await marketplace.ERC721Count()
+  const itemCount = await marketplace._listingERC721()
+  console.log("itemCount", itemCount)
   let listedItems = []
   for (let idx=1; idx <= itemCount; idx++) {
     const i = await marketplace.ERC721List(idx)

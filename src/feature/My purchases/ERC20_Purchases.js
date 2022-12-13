@@ -8,7 +8,7 @@ export default function ERC20_Purchases({ marketplace, nft, account }) {
     console.log("check loadPurchasedItem")
     const loadPurchasedItems = async () => {
         //Fetch purchased items from marketplace by querying Offered events with the buyer set as the user
-        const filter = marketplace.filters.ERC20Sold(null, account, null)
+        const filter = marketplace.filters.ERC20Sold(null, null, account, null, null)
         console.log("check filter")
         const results = await marketplace.queryFilter(filter)
         //Fetch metadata of each nft and add to listedItem object
@@ -43,6 +43,7 @@ export default function ERC20_Purchases({ marketplace, nft, account }) {
             <h2>Loading...</h2>
         </main>
     )
+    console.log(purchases)
     
     return (
         <div className="flex justify-center">

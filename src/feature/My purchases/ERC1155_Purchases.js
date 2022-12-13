@@ -34,6 +34,7 @@ export default function ERC1155_Purchases({ marketplace, nft, account }) {
 
         }))
         console.log("check Loading")
+        console.log("purchases", purchases.length)
         setLoading(false)
         setPurchases(purchases)
     }

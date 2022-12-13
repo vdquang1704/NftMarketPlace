@@ -28,8 +28,8 @@ const List_ERC721 = ({ marketplace, nft }) => {
     
     // approve marketplace to spend nft
     console.log("Id: ", Number(id))
-    console.log("Id1: ", 18)
     await(await nft.setApprovalForAll(marketplace.address, true)).wait()
+    
     // add nft to marketplace
     const listingPrice = ethers.utils.parseEther(price.toString())
    

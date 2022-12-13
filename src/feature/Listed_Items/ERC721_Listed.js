@@ -9,7 +9,7 @@ export default function ERC721_Listed({ marketplace, nft, account }) {
   
   const loadListedItems = async () => {
     // Load all sold items that the user listed
-    const itemCount = await marketplace.ERC721Count();
+    const itemCount = await marketplace._listingERC721();
     console.log("itemCount: ", itemCount.toString() )
     let listedItems = []
     // let soldItems = []

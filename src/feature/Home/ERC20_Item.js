@@ -45,6 +45,7 @@ const Home_ERC20 = ({ marketplace, nft }) => {
    <h2>Loading...</h2> 
   </main>
  )
+ console.log(items.length)
  return (
   <div className="flex justify-center">
    {items.length > 0 ? 
